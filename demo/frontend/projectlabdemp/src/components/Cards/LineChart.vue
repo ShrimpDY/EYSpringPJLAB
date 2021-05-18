@@ -1,19 +1,8 @@
 <template>
   <div class="lineChart">
     <b-card-group deck>
-      <b-card class="line-chart-card" title="Change In VaR Measure Overtime">
-        <div class="line-chart" id="change-in-VaR-measure-overtime"></div>
-      </b-card>
-      <b-card class="line-chart-card" title="Market Risk-Weighted Assets Overtime">
-        <div class="line-chart" id="market-risk-weighted-assets-overtime"></div>
-      </b-card>
-    </b-card-group>
-    <b-card-group deck>
-      <b-card class="line-chart-card" title="sVaR-VaR Ratio Overtime">
-        <div class="line-chart" id="sVaR-VaR-ratio-overtime"></div>
-      </b-card>
-      <b-card class="line-chart-card" title="Diversification Overtime">
-        <div class="line-chart" id="diversification-overtime"></div>
+      <b-card class="line-chart-card" title="Total Exposure Overtime">
+        <div class="line-chart" id="total-exposure-overtime"></div>
       </b-card>
     </b-card-group>
   </div>
@@ -75,10 +64,7 @@ export default {
     getData (id, quarter1, quarter2, selected) {
       let that = this
       let endpointDict = {
-        'change-in-VaR-measure-overtime': 'getChangeInVaRBasedMeasureOvertime',
-        'market-risk-weighted-assets-overtime': 'getAdvancedMarketRiskWeightedAssets',
-        'sVaR-VaR-ratio-overtime': 'getVaRsVaRRatioOvertime',
-        'diversification-overtime': 'getDiversificationVarOvertime'
+        'total-exposure-overtime': 'getTotalExposureOvertime'
       }
       const start = quarter1
       const end = quarter2
@@ -98,10 +84,8 @@ export default {
               chartItem.type = 'line'
               chartItem.data = []
               for (const item of data[key]) {
-                if (id === 'change-in-VaR-measure-overtime' || id === 'market-risk-weighted-assets-overtime') {
-                  chartItem.data.push((item[1] / 1000).toFixed(2))
-                } else {
-                  chartItem.data.push(item[1].toFixed(2))
+                if (id === 'total-exposure-overtime') {
+                  chartItem.data.push((item[1] / 1000000).toFixed(2))
                 }
               }
               series.push(chartItem)
@@ -123,26 +107,7 @@ export default {
             }
           ]
           let yAxisMap = {
-            'change-in-VaR-measure-overtime': millionYAxis,
-            'market-risk-weighted-assets-overtime': millionYAxis,
-            'sVaR-VaR-ratio-overtime': [
-              {
-                type: 'value',
-                axisLabel: {
-                  formatter: function (value) {
-                    return value.toFixed(2) // show two decimals for ratio
-                  }
-                }
-              }
-            ],
-            'diversification-overtime': [
-              {
-                type: 'value',
-                axisLabel: {
-                  formatter: '{value} %'
-                }
-              }
-            ]
+            'total-exposure-overtime': millionYAxis
           }
           that.lineChartData.legend = companies
           that.lineChartData.xAxisData = xString

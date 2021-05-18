@@ -64,8 +64,8 @@
 
 <script>
 import LineChart from '@/components/Cards/LineChart'
-import OverTimeBarChart from '@/components/Cards/OverTimeBarChart'
-import OverTimeTable from '@/components/Cards/OverTimeTable'
+// import OverTimeBarChart from '@/components/Cards/OverTimeBarChart'
+// import OverTimeTable from '@/components/Cards/OverTimeTable'
 import DataSetting from '../../../../../backend/data_setting.json'
 import helper from '../../helper'
 
@@ -106,7 +106,7 @@ export default {
     }
   },
   name: 'overtime-charts',
-  components: {OverTimeTable, LineChart, OverTimeBarChart},
+  components: {LineChart},
   data: function () {
     return {
       selected: [],
@@ -118,12 +118,12 @@ export default {
   methods: {
     getData () {
       console.log(this.selected)
-      this.$refs.lineChart.getData('change-in-VaR-measure-overtime', this.quarter1, this.quarter2, this.selected)
-      this.$refs.lineChart.getData('market-risk-weighted-assets-overtime', this.quarter1, this.quarter2, this.selected)
-      this.$refs.lineChart.getData('sVaR-VaR-ratio-overtime', this.quarter1, this.quarter2, this.selected)
-      this.$refs.lineChart.getData('diversification-overtime', this.quarter1, this.quarter2, this.selected)
-      this.$refs.overTimeBarChart.getData('number-of-VaR-breach', this.quarter1, this.quarter2, this.selected)
-      this.$refs.overTimeTable.getData('stress-window-table', this.quarter1, this.quarter2, this.selected)
+      this.$refs.lineChart.getData('total-exposure-overtime', this.quarter1, this.quarter2, this.selected)
+      // this.$refs.lineChart.getData('market-risk-weighted-assets-overtime', this.quarter1, this.quarter2, this.selected)
+      // this.$refs.lineChart.getData('sVaR-VaR-ratio-overtime', this.quarter1, this.quarter2, this.selected)
+      // this.$refs.lineChart.getData('diversification-overtime', this.quarter1, this.quarter2, this.selected)
+      // this.$refs.overTimeBarChart.getData('number-of-VaR-breach', this.quarter1, this.quarter2, this.selected)
+      // this.$refs.overTimeTable.getData('stress-window-table', this.quarter1, this.quarter2, this.selected)
     }
   }
 }

@@ -76,127 +76,18 @@ def response_processing(result):
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
 
-
-@bp.route('/getVaRsVarRComparison', methods=['GET'])
-def getVaRsVarRComparison():
+@bp.route('/getOverallExposureAdjustStack', methods=['GET'])
+def getOverallExposureAdjustStack():
     quarter = request.args['quarter']
-    logging.info("getVaRsVarRComparison comp_dict: %s", session["comp_dict"])
-    result = get_VaR_sVaR_item_by_quarter(quarter, session.get("comp_dict"))
+    result = get_exposure_adjustment_stack(quarter, session.get("comp_dict"))
     return response_processing(result)
 
-
-@bp.route('/getTradingAssetComparison', methods=['GET'])
-def getTradingAssetComparison():
-    quarter = request.args['quarter']
-    result = get_trading_asset_item_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getTradingAssetToRiskRatio', methods=['GET'])
-def getTradingAssetToRiskRatio():
-    quarter = request.args['quarter']
-    result = get_asset_to_var_ratio_item_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getTradingRevenueToVarRatio', methods=['GET'])
-def getTradingRevenueToVarRatio():
-    quarter = request.args['quarter']
-    result = get_revenue_to_var_ratio_item_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getStandardizedRiskWeightedAssets', methods=['GET'])
-def getStandardizedRiskWeightedAssets():
-    quarter = request.args['quarter']
-    result = get_standardized_risk_weighted_assets_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getVaRByAssetClassDiversification', methods=['GET'])
-def getVaRByAssetClassDiversification():
-    quarter = request.args['quarter']
-    result = get_asset_class_var_item_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getTradingAssetsAndChangeByQuarter', methods=['GET'])
-def getTradingAssetsAndChangeByQuarter():
-    quarter = request.args['quarter']
-    result = get_trading_assets_and_change_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getTradingLiabilitiesAndChangeByQuarter', methods=['GET'])
-def getTradingLiabilitiesAndChangeByQuarter():
-    quarter = request.args['quarter']
-    result = get_trading_liabilities_and_change_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getNetTradingAssetAndPercentChange', methods=['GET'])
-def getNetTradingAssetAndPercentChange():
-    quarter = request.args['quarter']
-    result = get_net_trading_asset_and_percent_change_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getGrossTradingAssetAndPercentChange', methods=['GET'])
-def getGrossTradingAssetAndPercentChange():
-    quarter = request.args['quarter']
-    result = get_gross_trading_asset_and_percent_change_by_quarter(quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getAdvancedMarketRiskWeightedAssets', methods=['GET'])
-def getAdvancedMarketRiskWeightedAssets():
+@bp.route('/getTotalExposureOvertime', methods=['GET'])
+def getTotalExposureOvertime():
     args = request.args
     start_quarter = args['start']
     end_quarter = args['end']
-    result = get_risk_weighted_asset_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    result = get_total_exposure_overtime(start_quarter, end_quarter, session.get("comp_dict"))
     return response_processing(result)
 
 
-@bp.route('/getChangeInVaRBasedMeasureOvertime', methods=['GET'])
-def getChangeInVaRBasedMeasureOvertime():
-    args = request.args
-    start_quarter = args['start']
-    end_quarter = args['end']
-    result = get_var_measure_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getVaRsVaRRatioOvertime', methods=['GET'])
-def getVaRsVaRRatioOvertime():
-    args = request.args
-    start_quarter = args['start']
-    end_quarter = args['end']
-    result = get_ratio_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getVaRBreachOvertime', methods=['GET'])
-def getVaRBreachOvertime():
-    args = request.args
-    start_quarter = args['start']
-    end_quarter = args['end']
-    result = get_num_var_breach_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getDiversificationVarOvertime', methods=['GET'])
-def getDiversificationVarOvertime():
-    args = request.args
-    start_quarter = args['start']
-    end_quarter = args['end']
-    result = get_var_diversification_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
-    return response_processing(result)
-
-
-@bp.route('/getStressWindowOvertime', methods=['GET'])
-def getStressWindowOvertime():
-    args = request.args
-    start_quarter = args['start']
-    end_quarter = args['end']
-    res = get_stress_window_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
-    return jsonify(res)

@@ -1,7 +1,6 @@
 {
     "reports": [
-        "FFIEC102",
-        "FRY9C"
+        "FFIEC101"
     ],
     "institutions": {
         "1073757": {

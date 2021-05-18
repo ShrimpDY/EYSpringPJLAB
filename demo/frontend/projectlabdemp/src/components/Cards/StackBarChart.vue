@@ -1,11 +1,8 @@
 <template>
   <div class="stack-bar-charts">
     <b-card-group deck>
-      <b-card class="stack-bar-chart-card" title="Standardized Market Risk-Weighted Assets Breakdown By Bank">
-        <div class="stack-bar-chart" id="standardized-market-risk-weighted-assets-breakdown-by-bank"></div>
-      </b-card>
-      <b-card class="stack-bar-chart-card" title="VaR by Asset Class and Diversification Effect">
-        <div class="stack-bar-chart" id="VaR-by-asset-class-and-diversification-effect"></div>
+      <b-card class="stack-bar-chart-card" title="Overall Exposure Adjustment Stack Bar Chart">
+        <div class="stack-bar-chart" id="overall-exposure-adjustment-stack-bar-chart"></div>
       </b-card>
     </b-card-group>
   </div>
@@ -70,8 +67,7 @@ export default {
       let that = this
       that.chartData = {}
       let endpointDict = {
-        'standardized-market-risk-weighted-assets-breakdown-by-bank': 'getStandardizedRiskWeightedAssets',
-        'VaR-by-asset-class-and-diversification-effect': 'getVaRByAssetClassDiversification'
+        'overall-exposure-adjustment-stack-bar-chart': 'getOverallExposureAdjustStack'
       }
       myAPI
         .getDataByQuarter(endpointDict[id], quarter)
@@ -92,10 +88,8 @@ export default {
                 let flag = 0
                 for (const item of data[key]) {
                   if (selectComp === item[0]) {
-                    if (id === 'standardized-market-risk-weighted-assets-breakdown-by-bank') {
-                      chartItem.data.push(Math.round(item[1] * 12.5 / 1000))
-                    } else {
-                      chartItem.data.push(Math.round(item[1]))
+                    if (id === 'overall-exposure-adjustment-stack-bar-chart') {
+                      chartItem.data.push(Math.round(item[1] / 1000000))
                     }
                     companies.push(item[0])
                     flag = 1
@@ -111,7 +105,7 @@ export default {
           console.log(companies)
           console.log(series)
           let yAxisMap = {
-            'standardized-market-risk-weighted-assets-breakdown-by-bank': [
+            'overall-exposure-adjustment-stack-bar-chart': [
               {
                 type: 'value',
                 name: 'Millions',
@@ -121,14 +115,6 @@ export default {
                     // show tick with comma
                     return (value).toLocaleString()
                   }
-                }
-              }
-            ],
-            'VaR-by-asset-class-and-diversification-effect': [
-              {
-                type: 'value',
-                axisLabel: {
-                  formatter: '{value} %'
                 }
               }
             ]

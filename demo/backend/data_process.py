@@ -126,7 +126,7 @@ def raw_csv_consolidation(report, csv_path):
     report, institution, date = parse_csv_path(csv_path)
     date = format_date(date)
     df = pd.read_csv(csv_path, header=0)
-    item_prefix = {"FFIEC102": "M", "FRY9C": "B"}  # drop the rows which ItemName is not "M*" or "B*"
+    item_prefix = {"FFIEC102": "M", "FRY9C": "B", "FFIEC101": "A"}  # drop the rows which ItemName is not "M*" or "B*"
     index_names = df[~df["ItemName"].str.startswith(item_prefix[report])].index
     df.drop(index_names, inplace=True)
     df["Institution"] = institution

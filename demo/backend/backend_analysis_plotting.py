@@ -19,6 +19,7 @@ def get_data(report):
     return df
 
 
+
 # previous day's Value-at-risk (VaR)-based measure
 # IR, Debt, Equity, FX, Commodities
 # return JSON: {id: [{item_name_1: item_value_1}, {item_name_2: item_value_2}]}
@@ -46,13 +47,11 @@ def test_VaR_sVarR_query(quarter_date):
     VaR_data = data.groupby('Company')[['Item_ID', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
     return VaR_data
 
-
 # Bar chart quarterly comparison:
 # 1. VaR and sVaR Comparison
 # 2. Trading Asset Comparison
 # 3. Trading Asset to Risk Ratio
 # 4. Trading Revenue to VaR Ratio
-
 
 def item_name_mapping(x, mapping):
     data_map = {}
@@ -61,7 +60,68 @@ def item_name_mapping(x, mapping):
         data_map[mapping[item[0]]] = item[1]
     return data_map
 
+def get_exposure_adjustment_stack(quarter, comp_dict):
+    #'AAAAFS87', 'AAAAFS88', 'AAAAFS89', 'AAAAFS90', 'AAAAFS91', 'AAAAFS92', 'AAAALB41'
 
+    asset_dict = {'AAAAFS87': 'Adjustment for investments',
+                  'AAAAFS88': 'Adjustment for derivative transactions',
+                  'AAAAFS89': 'Adjustment for repo-style transactions',
+                  'AAAAFS90': 'Adjustment for off-balance sheet exposures',
+                  'AAAAFS91': 'Adjustments for deductions from tier 1 capital',
+                  'AAAAFS92': 'Adjustments for frequency calculations',
+                  'AAAALB41': 'Adjustments for deductions'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAFS87', 'AAAAFS88', 'AAAAFS89', 'AAAAFS90', 'AAAAFS91', 'AAAAFS92', 'AAAALB41']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data = data.reset_index()
+    data.loc[data[data['Item_ID'] == 'AAAAFS91'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAFS91'].index,'Item'].astype(int)
+    data.loc[data[data['Item_ID'] == 'AAAAFS92'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAFS92'].index,'Item'].astype(int)
+    data.loc[data[data['Item_ID'] == 'AAAALB41'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAALB41'].index,'Item'].astype(int)
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+# Line chart overtime comparison:
+# 1. Advanced market risk-weighted assets over time
+# 2. Change in VaR-based measure over time
+# 3. sVaR to VaR ratio over time
+# 4. Change in diversification as a percentage of VaR over time
+# 5. Change in number of VaR Breaches overtime
+
+# TODO: The returned JSON only contains data in valid quarters
+#   for example: quarter_from=2010Q4, quarter_to=2020Q4
+#   the overtime analysis functions will only return list data from 2015Q3 to 2020Q4
+#   Therefore, the frontend should add NaN values to the series data in echarts option
+
+def get_item_overtime(item_id, quarter_from, quarter_to):
+    """
+    get item overtime data using item_id from FFIEC102 full csv file directly
+    """
+    raw_data = get_data('FFIEC101')
+    data = raw_data.query('Item_ID == @item_id and Quarter <= @quarter_to and Quarter >= @quarter_from')
+    data = data.reset_index()
+    data['Item'] = pd.to_numeric(data['Item'])
+    item_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    return item_data
+
+def get_total_exposure_overtime(quarter_from, quarter_to, comp_dict):
+    total_exp_overtime_ID= 'AAABH015'
+    item_data = get_item_overtime(total_exp_overtime_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+
+
+
+'''
 # VaR sVaR Comparison
 def get_VaR_sVaR_item_by_quarter(quarter, comp_dict):
     """
@@ -346,28 +406,7 @@ def get_gross_trading_asset_and_percent_change_by_quarter(quarter, comp_dict):
     return res
 
 
-# Line chart overtime comparison:
-# 1. Advanced market risk-weighted assets over time
-# 2. Change in VaR-based measure over time
-# 3. sVaR to VaR ratio over time
-# 4. Change in diversification as a percentage of VaR over time
-# 5. Change in number of VaR Breaches overtime
 
-# TODO: The returned JSON only contains data in valid quarters
-#   for example: quarter_from=2010Q4, quarter_to=2020Q4
-#   the overtime analysis functions will only return list data from 2015Q3 to 2020Q4
-#   Therefore, the frontend should add NaN values to the series data in echarts option
-
-def get_item_overtime(item_id, quarter_from, quarter_to):
-    """
-    get item overtime data using item_id from FFIEC102 full csv file directly
-    """
-    raw_data = get_data('FFIEC102')
-    data = raw_data.query('Item_ID == @item_id and Quarter <= @quarter_to and Quarter >= @quarter_from')
-    data = data.reset_index()
-    data['Item'] = pd.to_numeric(data['Item'])
-    item_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
-    return item_data
 
 
 # Advanced market risk-weighted assets
@@ -483,3 +522,4 @@ def get_stress_window_item_overtime(quarter_date_from, quarter_date_to, comp_dic
     total_data = data.groupby('Company')[['Item_ID', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
     res = dict((comp_dict[key], total_data[key]) for key in total_data)
     return res
+'''

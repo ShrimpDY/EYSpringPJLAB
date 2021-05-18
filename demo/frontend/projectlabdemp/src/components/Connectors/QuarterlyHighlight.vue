@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import BarChart from '@/components/Cards/BarChart'
+// import BarChart from '@/components/Cards/BarChart'
 import StackBarChart from '@/components/Cards/StackBarChart'
-import BarLineCharts from '@/components/Cards/BarPlusLineChart'
+// import BarLineCharts from '@/components/Cards/BarPlusLineChart'
 import DataSetting from '../../../../../backend/data_setting.json'
 import helper from '../../helper'
 
@@ -81,7 +81,7 @@ export default {
     }
   },
   name: 'quarter-charts',
-  components: {BarChart, StackBarChart, BarLineCharts},
+  components: { StackBarChart },
   data: function () {
     return {
       selected: [],
@@ -91,16 +91,16 @@ export default {
   },
   methods: {
     getData () {
-      this.$refs.barChart.getData('VaR-SVaR-comparison', this.quarter, this.selected)
-      this.$refs.barChart.getData('trading-asset-comparison', this.quarter, this.selected)
-      this.$refs.barChart.getAggData('trading-asset-to-risk-ratio', this.quarter, this.selected)
-      this.$refs.barChart.getAggData('trading-revenue-to-VaR-ratio', this.quarter, this.selected)
-      this.$refs.stackChart.getData('standardized-market-risk-weighted-assets-breakdown-by-bank', this.quarter, this.selected)
-      this.$refs.stackChart.getData('VaR-by-asset-class-and-diversification-effect', this.quarter, this.selected)
-      this.$refs.barLineChart.getData('trading-asset', this.quarter, this.selected)
-      this.$refs.barLineChart.getData('trading-liabilities', this.quarter, this.selected)
-      this.$refs.barLineChart.getData('net-trading-asset', this.quarter, this.selected)
-      this.$refs.barLineChart.getData('gross-trading-asset', this.quarter, this.selected)
+      // this.$refs.barChart.getData('VaR-SVaR-comparison', this.quarter, this.selected)
+      // this.$refs.barChart.getData('trading-asset-comparison', this.quarter, this.selected)
+      // this.$refs.barChart.getAggData('trading-asset-to-risk-ratio', this.quarter, this.selected)
+      // this.$refs.barChart.getAggData('trading-revenue-to-VaR-ratio', this.quarter, this.selected)
+      this.$refs.stackChart.getData('overall-exposure-adjustment-stack-bar-chart', this.quarter, this.selected)
+      // this.$refs.stackChart.getData('VaR-by-asset-class-and-diversification-effect', this.quarter, this.selected)
+      // this.$refs.barLineChart.getData('trading-asset', this.quarter, this.selected)
+      // this.$refs.barLineChart.getData('trading-liabilities', this.quarter, this.selected)
+      // this.$refs.barLineChart.getData('net-trading-asset', this.quarter, this.selected)
+      // this.$refs.barLineChart.getData('gross-trading-asset', this.quarter, this.selected)
     }
   }
 }

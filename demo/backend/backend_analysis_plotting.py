@@ -60,16 +60,213 @@ def item_name_mapping(x, mapping):
         data_map[mapping[item[0]]] = item[1]
     return data_map
 
+## Quarterly Highlights Key
+def get_total_capital_stack(quarter, comp_dict):
+    asset_dict = {'AAAB8274': 'Tier 1 Capital',
+                  'AAAB5311': 'Tier 2 Capital'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAB8274', 'AAAB5311']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+def get_total_RWA_bar(quarter, comp_dict):
+    asset_dict = {'AAABA223': 'Total Risk-weighted Assets'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAABA223']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+def key_ratio_comparison_bar(quarter, comp_dict):
+    asset_dict = {'AAABP793': 'Common equity tier 1 capital ratio',
+                  'AAAB7206': 'Tier 1 capital ratio',
+                  'AAAB7205': 'Total capital ratio'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAABP793', 'AAAB7206', 'AAAB7205']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+def get_buffer_stack(quarter, comp_dict):
+    # AAABP902 AAABP903 AAABP904 AAABP905 AAABP906
+
+    asset_dict = {'AAABFB52': 'conservation buffer',
+                  'AAABFB53': 'countercyclical buffer',
+                  'AAABFB54': 'GSIB buffer'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAABFB52', 'AAABFB53', 'AAABFB54']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+def get_total_exposure_decomposition(quarter_date, comp_dict):
+    # 'AAAAD956', 'AAAAY826', 'AAAAY829', 'AAAAY831'
+
+    asset_dict = {'AAAAD956': 'on-balance sheet exposure',
+                  'AAAAY826': 'total derivative exposure',
+                  'AAAAY829': 'total repo exposure',
+                  'AAAAY831': 'off-balance sheet exposure'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAD956', 'AAAAY826', 'AAAAY829', 'AAAAY831']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+    data = data.reset_index()
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+
+    exposure_comparison = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], exposure_comparison[key]) for key in exposure_comparison)
+    return res
+
+## Quarterly Highlights Detail
+def get_tier1deductions_adjustment_stack(quarter, comp_dict):
+    # 'AAABP841', 'AAABP842', 'AAABP843', 'AAABP849', 'AAABQ258', 'AAABP887', 'AAABP888'
+
+    asset_dict = {'AAABP841': 'Goodwill net',
+                  'AAABP842': 'Other intangible assets',
+                  'AAABP843': 'Deferred tax assets',
+                  'AAABP849': 'Accumulated net G/L',
+                  'AAABQ258': 'Unrealized G/L',
+                  'AAABP887': 'Defined-benefit pension fund assets',
+                  'AAABP888': 'Investments in own shares'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAABP841', 'AAABP842', 'AAABP843', 'AAABP849', 'AAABQ258', 'AAABP887', 'AAABP888']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+
+def get_tier1composition_stack(quarter, comp_dict):
+    # 'AAABP840', 'AAABP858', 'AAABP864', 'AAABP865'
+
+    asset_dict = {'AAABP840': 'Common equity tier 1 capital',
+                  'AAABP858': 'Total tier 1 capital adjustments and deductions',
+                  'AAABP864': 'Total additional tier 1 capital deductions',
+                  'AAABP865': 'Additional tier 1 capital'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAABP840', 'AAABP858', 'AAABP864', 'AAABP865']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data = data.reset_index()
+    data.loc[data[data['Item_ID'] == 'AAABP858'].index, 'Item'] = -data.loc[
+        data[data['Item_ID'] == 'AAABP858'].index, 'Item'].astype(int)
+    data.loc[data[data['Item_ID'] == 'AAABP864'].index, 'Item'] = -data.loc[
+        data[data['Item_ID'] == 'AAABP864'].index, 'Item'].astype(int)
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+
+def get_tier2deduction_adjustment_stack(quarter, comp_dict):
+    # AAABP902 AAABP903 AAABP904 AAABP905 AAABP906
+
+    asset_dict = {'AAABP902': 'Investments',
+                  'AAABP903': 'Reciprocal cross-holdings',
+                  'AAABP904': 'Non-significant investments',
+                  'AAABP905': 'Significant investments in financial institutions',
+                  'AAABP906': 'Other deductions'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAABP902', 'AAABP903', 'AAABP904', 'AAABP905', 'AAABP906']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+def get_tier2_before_deduction_stack(quarter, comp_dict):
+    #'AAABP866', 'AAABP867', 'AAABP868', 'AAAB5310', 'AAABP870'
+
+    asset_dict = {'AAABP866': 'Tier2 capital instrument plus related surplus',
+                  'AAABP867': 'Non-qualifying capital instruments',
+                  'AAABP868': 'Total capital minority interest',
+                  'AAAB5310': 'Eligible credit reserves'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAABP866', 'AAABP867', 'AAABP868', 'AAAB5310']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
 def get_exposure_adjustment_stack(quarter, comp_dict):
     #'AAAAFS87', 'AAAAFS88', 'AAAAFS89', 'AAAAFS90', 'AAAAFS91', 'AAAAFS92', 'AAAALB41'
 
-    asset_dict = {'AAAAFS87': 'Adjustment for investments',
-                  'AAAAFS88': 'Adjustment for derivative transactions',
-                  'AAAAFS89': 'Adjustment for repo-style transactions',
-                  'AAAAFS90': 'Adjustment for off-balance sheet exposures',
-                  'AAAAFS91': 'Adjustments for deductions from tier 1 capital',
-                  'AAAAFS92': 'Adjustments for frequency calculations',
-                  'AAAALB41': 'Adjustments for deductions'}
+    asset_dict = {'AAAAFS87': 'investments',
+                  'AAAAFS88': 'derivative transacts',
+                  'AAAAFS89': 'repo-style transacts',
+                  'AAAAFS90': 'off-bal sheet exposures',
+                  'AAAAFS91': 'deduct from tier 1 capital',
+                  'AAAAFS92': 'freq calculations',
+                  'AAAALB41': 'deductions'}
 
     raw_data = get_data('FFIEC101')
     raw_data.update(raw_data.groupby('Company').ffill())
@@ -78,7 +275,6 @@ def get_exposure_adjustment_stack(quarter, comp_dict):
     data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
     data = data.reset_index()
 
-    data = data.reset_index()
     data.loc[data[data['Item_ID'] == 'AAAAFS91'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAFS91'].index,'Item'].astype(int)
     data.loc[data[data['Item_ID'] == 'AAAAFS92'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAFS92'].index,'Item'].astype(int)
     data.loc[data[data['Item_ID'] == 'AAAALB41'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAALB41'].index,'Item'].astype(int)
@@ -87,7 +283,265 @@ def get_exposure_adjustment_stack(quarter, comp_dict):
     data = data.replace({'Company': comp_dict})
     total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
     res = dict((asset_dict[key], total_data[key]) for key in total_data)
+
     return res
+
+def get_on_balance_sheet_exposure_decomposition(quarter_date, comp_dict):
+    # 'AAAAD956', 'AAAAY826', 'AAAAY829', 'AAAAY831'
+
+    asset_dict = {'AAAAY830': 'The balance sheet carrying value',
+                  'AAAAM349': 'Deductions from CET1 and additional T1 capital',
+                  'AAAALB41': 'Deductions of qualifying central bank deposits'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAY830', 'AAAAM349', 'AAAALB41']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+    data = data.reset_index()
+
+    data.loc[data[data['Item_ID'] == 'AAAAM349'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAM349'].index,'Item'].astype(int)
+    data.loc[data[data['Item_ID'] == 'AAAALB41'].index,'Item'] = -data.loc[data[data['Item_ID'] == 'AAAALB41'].index,'Item'].astype(int)
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+
+    exposure_comparison = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], exposure_comparison[key]) for key in exposure_comparison)
+    return res
+
+
+def get_derivative_exposure_decomposition(quarter_date, comp_dict):
+    # 'AAAAD956', 'AAAAY826', 'AAAAY829', 'AAAAY831'
+
+    asset_dict = {'AAAAM337': 'Replacement cost for all derivative transactions',
+                  'AAAAM339': 'Add-on amounts for potential future exposure',
+                  'AAAAY822': 'Gross-up for collateral',
+                  'AAAAM340': 'Adjusted effective notional principal amount of sold credit protection',
+                  'AAAAY823': 'Deduction of receivable assets',
+                  'AAAAY824': 'Exempted exposures to CCPs',
+                  'AAAAY825': 'Offsets and PFE deductions'
+                  }
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAM337', 'AAAAM339', 'AAAAY822', 'AAAAM340', 'AAAAY823', 'AAAAY824', 'AAAAY825']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+    data = data.reset_index()
+
+    data.loc[data[data['Item_ID'] == 'AAAAY823'].index, 'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAY823'].index, 'Item'].astype(int)
+    data.loc[data[data['Item_ID'] == 'AAAAY824'].index, 'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAY824'].index, 'Item'].astype(int)
+    data.loc[data[data['Item_ID'] == 'AAAAY825'].index, 'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAY825'].index, 'Item'].astype(int)
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+
+    exposure_comparison = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], exposure_comparison[key]) for key in exposure_comparison)
+    print(res)
+    return res
+
+def get_repo_exposure_decomposition(quarter_date, comp_dict):
+    # 'AAAAD956', 'AAAAY826', 'AAAAY829', 'AAAAY831'
+
+    asset_dict = {'AAAAM334': 'Gross assets for repo-style transactions',
+                  'AAAAN507': 'Counterparty credit risk',
+                  'AAAAY827': 'Exposure amount for repo-style transactions',
+                  'AAAAY828': 'Reduction of the gross value of receivables'
+                  }
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAM334', 'AAAAN507', 'AAAAY827', 'AAAAY828']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+    data = data.reset_index()
+
+    data.loc[data[data['Item_ID'] == 'AAAAY828'].index, 'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAY828'].index, 'Item'].astype(int)
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+
+    exposure_comparison = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], exposure_comparison[key]) for key in exposure_comparison)
+    return res
+
+def get_off_balance_sheet_exposure_decomposition(quarter_date, comp_dict):
+    # 'AAAAD956', 'AAAAY826', 'AAAAY829', 'AAAAY831'
+
+    asset_dict = {'AAAAH012': 'Off-balance sheet exposures at gross notional amounts',
+                  'AAAAH013': 'Adjustments for conversion to credit equivalent amounts',
+                  }
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAH012', 'AAAAH013']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+    data = data.reset_index()
+
+    data.loc[data[data['Item_ID'] == 'AAAAH013'].index, 'Item'] = -data.loc[data[data['Item_ID'] == 'AAAAH013'].index, 'Item'].astype(int)
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+
+    exposure_comparison = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], exposure_comparison[key]) for key in exposure_comparison)
+    return res
+
+def get_comparison_asset_exposure_bar(quarter, comp_dict):
+    asset_dict = {'AAAA2170': 'Total Consolidated Assets Reported',
+                  'AAAAH015': 'Total Leverage Exposure'}
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAA2170', 'AAAAH015']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+def get_TC_DA_by_quarter(quarter_from,comp_dict):
+    """
+    return the QoQ change from Q1 to Q2 2020
+    """
+    asset_dict = {'AAAB3792': 'Total Capital',
+                  'AAAAY826': 'Derivative Exposure',
+                  }
+    quarter = quarter_from
+    a = quarter_from[-1]
+    if(a=="4"):
+        tmpquarter2 = int(quarter[0:4])
+        tmpquarter2 += 1
+        quarter2 = str(tmpquarter2)+"Q1"
+    else:
+        tmpquarter2 = int(quarter[-1])
+        tmpquarter2 += 1
+        quarter2 = quarter[0:5]+str(tmpquarter2)
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+    item_names = ['AAAB3792', 'AAAAY826']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter2')
+    data2 = raw_data.query('Item_ID in @item_names and Quarter == @quarter')
+    data = data.reset_index()
+    data2 = data2.reset_index()
+    data.loc[:,'QoQ']=data.loc[:,'Item'].astype(float)/data2.loc[:,'Item'].astype(float)-1
+    data = data.replace({'Company': comp_dict})
+    total_data = data.groupby('Item_ID')[['Company', 'QoQ']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    return res
+
+def get_total_on_balance_sheet_exposure(quarter_date, comp_dict):
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAD956', 'AAABH015', 'AAAAFS87']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+
+    data = data.reset_index()
+    data['Item'] = data['Item'].astype(float)
+    data.loc[data[data['Item_ID'] == 'AAAAFS87'].index, 'Item'] = np.array(data[data['Item_ID'] == 'AAAAD956']['Item'].to_list()) / np.array(data[data['Item_ID'] == 'AAABH015']['Item'].to_list())
+
+
+    on_balance_sheet_exposure = data.groupby('Company')[['Item_ID', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], on_balance_sheet_exposure[key]) for key in on_balance_sheet_exposure)
+
+    return res
+
+def get_derivative_exposure(quarter_date, comp_dict):
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAY826', 'AAABH015', 'AAAAFS87']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+
+    data = data.reset_index()
+    data['Item'] = data['Item'].astype(float)
+    data.loc[data[data['Item_ID'] == 'AAAAFS87'].index, 'Item'] = np.array(data[data['Item_ID'] == 'AAAAY826']['Item'].to_list()) / np.array(data[data['Item_ID'] == 'AAABH015']['Item'].to_list())
+
+
+    derivative_sheet_exposure = data.groupby('Company')[['Item_ID', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], derivative_sheet_exposure[key]) for key in derivative_sheet_exposure)
+
+    return res
+
+def get_repo_exposure(quarter_date, comp_dict):
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAY829', 'AAABH015', 'AAAAFS87']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+
+    data = data.reset_index()
+    data['Item'] = data['Item'].astype(float)
+    data.loc[data[data['Item_ID'] == 'AAAAFS87'].index, 'Item'] = np.array(data[data['Item_ID'] == 'AAAAY829']['Item'].to_list()) / np.array(data[data['Item_ID'] == 'AAABH015']['Item'].to_list())
+
+
+    repo_exposure = data.groupby('Company')[['Item_ID', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], repo_exposure[key]) for key in repo_exposure)
+
+    return res
+
+def get_offbalance_exposure(quarter_date, comp_dict):
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAAFS90', 'AAABH015', 'AAAAFS87']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+
+    data = data.reset_index()
+    data['Item'] = data['Item'].astype(float)
+    data.loc[data[data['Item_ID'] == 'AAAAFS87'].index, 'Item'] = np.array(data[data['Item_ID'] == 'AAAAFS90']['Item'].to_list()) / np.array(data[data['Item_ID'] == 'AAABH015']['Item'].to_list())
+
+
+    repo_exposure = data.groupby('Company')[['Item_ID', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], repo_exposure[key]) for key in repo_exposure)
+
+    return res
+
+
+def get_leverage_supplementary(quarter_date, comp_dict):
+    asset_dict = {'AAAB8274': 'Tier-1 leverage ratio',
+                  'AAAAH036': 'Supplementary leverage ratio',
+                  'AAAA2170': 'Temp'
+                  }
+
+    raw_data = get_data('FFIEC101')
+    raw_data.update(raw_data.groupby('Company').ffill())
+
+    item_names = ['AAAB8274', 'AAAA2170', 'AAAAH036']
+    data = raw_data.query('Item_ID in @item_names and Quarter == @quarter_date')
+
+
+    data = data.reset_index()
+    data['Item'] = data['Item'].astype(float)
+    data = data.replace({'Company': comp_dict})
+    data.loc[data[data['Item_ID'] == 'AAAB8274'].index, 'Item'] = (np.array(data[data['Item_ID'] == 'AAAB8274']['Item'].to_list()) / np.array(data[data['Item_ID'] == 'AAAA2170']['Item'].to_list())) * 100
+
+    total_data = data.groupby('Item_ID')[['Company', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((asset_dict[key], total_data[key]) for key in total_data)
+    del res['Temp']
+    return res
+
 
 # Line chart overtime comparison:
 # 1. Advanced market risk-weighted assets over time
@@ -112,13 +566,277 @@ def get_item_overtime(item_id, quarter_from, quarter_to):
     item_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
     return item_data
 
+def get_item_overtime_for_ratio(item_id, quarter_from, quarter_to):
+    """
+    get item overtime data using item_id from FFIEC102 full csv file directly
+    """
+    raw_data = get_data('FFIEC101')
+    data = raw_data.query('Item_ID == @item_id and Quarter <= @quarter_to and Quarter >= @quarter_from')
+    data = data.reset_index()
+    data['Item'] = pd.to_numeric(data['Item'])
+    data.loc[data[data['Item_ID'] == item_id[0]].index, 'Item'] = np.array(data[data['Item_ID'] == item_id[0]]['Item'].to_list()) / np.array(data[data['Item_ID'] == item_id[1]]['Item'].to_list())
+    data = data[data['Item_ID'] == item_id[0]]
+
+    item_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    return item_data
+
+def get_tier1_capital_overtime(quarter_from, quarter_to, comp_dict):
+    tier1_capital_ID= 'AAAB8274'
+    item_data = get_item_overtime(tier1_capital_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_tier2_capital_overtime(quarter_from, quarter_to, comp_dict):
+    tier2_capital_ID= 'AAAB5311'
+    item_data = get_item_overtime(tier2_capital_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_tier1_retainedearnings_overtime(quarter_from, quarter_to, comp_dict):
+    tier2_capital_ID= 'AAAB3247'
+    item_data = get_item_overtime(tier2_capital_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_tier1_goodwill_overtime(quarter_from, quarter_to, comp_dict):
+    tier2_capital_ID= 'AAABP841'
+    item_data = get_item_overtime(tier2_capital_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_tier2_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    capital_compare = ['AAAB5311', 'AAAB3792']
+    item_data = get_item_overtime_for_ratio(capital_compare, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_tier2_minority_int_notin_tier1_overtime(quarter_from, quarter_to, comp_dict):
+    minority_int_notin_tier1_ID= 'AAABP868'
+    item_data = get_item_overtime(minority_int_notin_tier1_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_tier2_deduction_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    deduction_bar = ['AAABP872', 'AAABP870']
+    item_data = get_item_overtime_for_ratio(deduction_bar, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_cet1_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    cet1_ratio_ID = 'AAABP793'
+    item_data = get_item_overtime(cet1_ratio_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)
+    return res
+
+def get_tier1_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    cet1_ratio_ID = 'AAAB7206'
+    item_data = get_item_overtime(cet1_ratio_ID, quarter_from, quarter_to)
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)
+    return res
+
 def get_total_exposure_overtime(quarter_from, quarter_to, comp_dict):
     total_exp_overtime_ID= 'AAABH015'
     item_data = get_item_overtime(total_exp_overtime_ID, quarter_from, quarter_to)
     res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
     return res
 
+def get_CET1vsTier1_overtime(quarter_from, quarter_to, comp_dict):
+    CETTierOneComparison = ['AAABP793', 'AAAB7206']
+    item_data = get_item_overtime_for_ratio(CETTierOneComparison, quarter_from, quarter_to)
 
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_on_balance_sheet_exp_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = 'AAAAD956'
+    item_data = get_item_overtime(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_derivative_exp_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = 'AAAAY826'
+    item_data = get_item_overtime(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_repo_exp_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = 'AAAAY829'
+    item_data = get_item_overtime(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_off_balance_exp_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = 'AAAAFS90'
+    item_data = get_item_overtime(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_on_balance_sheet_exp_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = ['AAAAD956', 'AAABH015']
+    item_data = get_item_overtime_for_ratio(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_derivative_exposure_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = ['AAAAY826','AAABH015']
+    item_data = get_item_overtime_for_ratio(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_repo_exposure_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = ['AAAAY829','AAABH015']
+    item_data = get_item_overtime_for_ratio(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_off_balance_sheet_exp_ratio_overtime(quarter_from, quarter_to, comp_dict):
+    exposure_comparison_bar = ['AAAAFS90','AAABH015']
+    item_data = get_item_overtime_for_ratio(exposure_comparison_bar, quarter_from, quarter_to)
+
+    res = dict((comp_dict[key], item_data[key]) for key in item_data)  # change the id to name
+    return res
+
+def get_T2C_TC_ratio_item_overtime(quarter_from, quarter_to, comp_dict):
+    """
+    return the ratio of Tier 2 Capital and Total Capital overtime
+    """
+    raw_data = get_data('FFIEC101')
+    total_capital = 'AAAB3792'
+    tier_2_capital = 'AAAB5311'
+    data = raw_data.query('Item_ID == @total_capital and Quarter <= @quarter_to and '
+                          'Quarter >= @quarter_from')
+
+    data_2 = raw_data.query('Item_ID == @tier_2_capital and Quarter <= @quarter_to and '
+                            'Quarter >= @quarter_from')
+    data.loc[:, 'Item_2'] = data_2.loc[:, 'Item']
+    data.loc[:, 'Ratio'] = data.loc[:, 'Item_2'].astype(float) / data.loc[:, 'Item'].astype(float)
+    data = data.drop(['Item', 'Item_2'], axis=1).rename(columns={'Ratio': 'Item'})
+    data = data.reset_index()
+    asset_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], asset_data[key]) for key in asset_data)  # change the id to name
+    return res
+
+def get_TC_OBSI_ratio_item_overtime(quarter_from, quarter_to, comp_dict):
+    """
+    return the ratio of Total Capital and On Balance Sheet Items overtime
+    """
+    raw_data = get_data('FFIEC101')
+    on_balance_sheet_items = 'AAAAD956'
+    total_capital = 'AAAB3792'
+    data = raw_data.query('Item_ID == @on_balance_sheet_items and Quarter <= @quarter_to and '
+                          'Quarter >= @quarter_from')
+
+    data_2 = raw_data.query('Item_ID == @total_capital and Quarter <= @quarter_to and '
+                            'Quarter >= @quarter_from')
+    data.loc[:, 'Item_2'] = data_2.loc[:, 'Item']
+    data.loc[:, 'Ratio'] = data.loc[:, 'Item_2'].astype(float) / data.loc[:, 'Item'].astype(float)
+    data = data.drop(['Item', 'Item_2'], axis=1).rename(columns={'Ratio': 'Item'})
+    data = data.reset_index()
+    asset_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], asset_data[key]) for key in asset_data)  # change the id to name
+    return res
+
+def get_TC_DA_ratio_item_overtime(quarter_from, quarter_to, comp_dict):
+    """
+    return the ratio of Total Capital and Derivative Assets overtime
+    """
+    raw_data = get_data('FFIEC101')
+    derivative_assets = 'AAAAY826'
+    total_capital = 'AAAB3792'
+    data = raw_data.query('Item_ID == @derivative_assets and Quarter <= @quarter_to and '
+                          'Quarter >= @quarter_from')
+
+    data_2 = raw_data.query('Item_ID == @total_capital and Quarter <= @quarter_to and '
+                            'Quarter >= @quarter_from')
+    data.loc[:, 'Item_2'] = data_2.loc[:, 'Item']
+    data.loc[:, 'Ratio'] = data.loc[:, 'Item_2'].astype(float) / data.loc[:, 'Item'].astype(float)
+    data = data.drop(['Item', 'Item_2'], axis=1).rename(columns={'Ratio': 'Item'})
+    data = data.reset_index()
+    asset_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], asset_data[key]) for key in asset_data)  # change the id to name
+    return res
+
+
+def get_TC_RA_ratio_item_overtime(quarter_from, quarter_to, comp_dict):
+    """
+    return the ratio of Total Capital and Repo Assets overtime
+    """
+    raw_data = get_data('FFIEC101')
+    repo_asset = 'AAAAY829'
+    total_capital = 'AAAB3792'
+    data = raw_data.query('Item_ID == @repo_asset and Quarter <= @quarter_to and '
+                          'Quarter >= @quarter_from')
+
+    data_2 = raw_data.query('Item_ID == @total_capital and Quarter <= @quarter_to and '
+                            'Quarter >= @quarter_from')
+    data.loc[:, 'Item_2'] = data_2.loc[:, 'Item']
+    data.loc[:, 'Ratio'] = data.loc[:, 'Item_2'].astype(float) / data.loc[:, 'Item'].astype(float)
+    data = data.drop(['Item', 'Item_2'], axis=1).rename(columns={'Ratio': 'Item'})
+    data = data.reset_index()
+    asset_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], asset_data[key]) for key in asset_data)  # change the id to name
+    print(res)
+    return res
+
+def get_TC_OffBSI_ratio_item_overtime(quarter_from, quarter_to, comp_dict):
+    """
+    return the ratio of Total Capital and Off Balance Sheet Items overtime
+
+    """
+    raw_data = get_data('FFIEC101')
+    off_balance_sheet_items = 'AAAAY831'
+    total_capital = 'AAAB3792'
+    data = raw_data.query('Item_ID == @off_balance_sheet_items and Quarter <= @quarter_to and '
+                          'Quarter >= @quarter_from')
+
+    data_2 = raw_data.query('Item_ID == @total_capital and Quarter <= @quarter_to and '
+                            'Quarter >= @quarter_from')
+    data.loc[:, 'Item_2'] = data_2.loc[:, 'Item']
+    data.loc[:, 'Ratio'] = data.loc[:, 'Item_2'].astype(float) / data.loc[:, 'Item'].astype(float)
+    data = data.drop(['Item', 'Item_2'], axis=1).rename(columns={'Ratio': 'Item'})
+    data = data.reset_index()
+    asset_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], asset_data[key]) for key in asset_data)  # change the id to name
+    return res
+
+def get_RWA_TA_ratio_item_overtime(quarter_from, quarter_to, comp_dict):
+    """
+    return the ratio of RWA and Total Assets overtime
+    """
+    raw_data = get_data('FFIEC101')
+    on_balance_sheet_items = 'AAAAD956'
+    derivative_assets = 'AAAAY826'
+    repo_assets = 'AAAAY829'
+    off_balance_sheet_items = 'AAAAY831'
+    total_assets = 'AAABA223'
+    data = raw_data.query('Item_ID == @on_balance_sheet_items and Quarter <= @quarter_to and '
+                          'Quarter >= @quarter_from')
+    data3 = raw_data.query('Item_ID == @derivative_assets and Quarter <= @quarter_to and '
+                           'Quarter >= @quarter_from')
+    data4 = raw_data.query('Item_ID == @repo_assets and Quarter <= @quarter_to and '
+                           'Quarter >= @quarter_from')
+    data5 = raw_data.query('Item_ID == @off_balance_sheet_items and Quarter <= @quarter_to and '
+                           'Quarter >= @quarter_from')
+    data_2 = raw_data.query('Item_ID == @total_assets and Quarter <= @quarter_to and '
+                            'Quarter >= @quarter_from')
+
+
+    data.loc[:, 'Item1'] = data.loc[:,'Item'].astype(float)+data3.loc[:, 'Item'].astype(float)+data4.loc[:, 'Item'].astype(float)+data5.loc[:, 'Item'].astype(float)
+    data.loc[:, 'Item'] = data_2.loc[:, 'Item']
+    data.loc[:, 'Ratio'] = data.loc[:, 'Item'].astype(float) / data.loc[:, 'Item1'].astype(float)
+    data = data.drop(['Item', 'Item1'], axis=1).rename(columns={'Ratio': 'Item'})
+    data = data.reset_index()
+    asset_data = data.groupby('Company')[['Quarter', 'Item']].apply(lambda x: x.values.tolist()).to_dict()
+    res = dict((comp_dict[key], asset_data[key]) for key in asset_data)  # change the id to name
+    return res
 
 
 '''

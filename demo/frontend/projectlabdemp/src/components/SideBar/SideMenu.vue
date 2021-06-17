@@ -5,15 +5,35 @@
         <img :src="logoURL" style="height:50px; padding-top:3px; padding-left:30px;">
       </div>
       <ul class="list-unstyled components">
-        <p>NAVIGATION</p>
-        <li>
+        <li id="nav-title">NAVIGATION</li>
+        <li id="Home-Tab">
           <a href= "/#/home" data-toggle="collapse" aria-expanded="false">Home</a>
         </li>
-        <li>
+        <li id="Quarter-Highlight-Tab">
           <a href= "/#/QuarterlyHighlight" data-toggle="collapse" aria-expanded="false">Quarterly Highlights</a>
+          <div class="collapse-item-QH" id="sidebarQH">
+            <ul class="QH-nav-second-level">
+              <li>
+                 <a href= "/#/QuarterlyHighlightKey" data-toggle="collapse" aria-expanded="false">Key Highlights</a>
+              </li>
+              <li>
+                <a href= "/#/QuarterlyHighlightDetail" data-toggle="collapse" aria-expanded="false">Detail Illustration</a>
+              </li>
+            </ul>
+          </div>
         </li>
-        <li>
+        <li class="Overtime-Analysis-Tab">
           <a href= "/#/OverTimeAnalysis" data-toggle="collapse" aria-expanded="false">Overtime Analysis</a>
+          <div class="collapse-item" id="sidebarDashboard">
+            <ul class="nav-second-level">
+              <li>
+                <a href= "/#/OverTimeAnalysisKey" data-toggle="collapse" aria-expanded="false">Key Highlights</a>
+              </li>
+              <li>
+                <a href= "/#/OverTimeAnalysisDetail" data-toggle="collapse" aria-expanded="false">Detail Illustration</a>
+              </li>
+            </ul>
+          </div>
         </li>
       </ul>
     </nav>
@@ -157,6 +177,11 @@ a, a:hover, a:focus {
 #sidebar ul li.active > a, a[aria-expanded="true"] {
   color: #ffffff;
   background: #5A5858;
+}
+
+#nav-title li {
+  font-size: 1em;
+  padding-left: 30px;
 }
 
 ul ul a {

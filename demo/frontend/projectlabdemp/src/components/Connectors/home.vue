@@ -3,7 +3,7 @@
     <!-- {{dataInfo}} -->
     <div class="home_header_layout">
       <h3 class="home_header">
-        <span class="home_header_span">Welcome to FFIEC 102 Forms Dashboard</span>
+        <span class="home_header_span">Welcome to FFIEC 101 Forms Dashboard</span>
       </h3>
     </div>
     <div v-if="loading">
@@ -182,7 +182,7 @@ export default {
   width: 280px;
 }
 .home_header_span{
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Georgia', sans-serif;
   font-weight: bold;
   color: #323030;
 }

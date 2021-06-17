@@ -1,120 +1,331 @@
 <template>
   <div>
-    <div class="QH_header_layout">
-      <h3 class="QH_header">
-        <span class="QH_header_span">Quarterly Highlights</span>
+    <div class="OA_header_layout">
+      <h3 class="OA_header">
+        <span class="OA_header_span">Quarterly Highlights</span>
       </h3>
     </div>
-    <b-form id="main-input" inline>
-      <b-form-group inline id="input-group" label="Please input the quarter:" label-for="input-quarter">
-        <b-form-input id="input-quarter" name="input-quarter" v-model.trim="quarter"
-                      style="margin-left:10px;" placeholder="example: 2020Q3" required>
-        </b-form-input>
-      </b-form-group>
-      <b-form-group inline id="select-group" label="Select Company:">
-      </b-form-group>
-      <b-form-checkbox-group
-            id="checkbox-group-1"
-            v-model="selected"
-            :options="options"
-            name="Company-Select"
-      ></b-form-checkbox-group>
-      <b-button @click="getData()" variant="primary" :disabled="!validationQ1 || !validationSelection">Search</b-button>
-    </b-form>
-    <b-form id="error-catcher">
-      <b-form-group id="error-catcher-box" label="You may have following errors:">
-        <b-form-invalid-feedback :state="validationQ1">
-            Your input should be at the form format like 2020Q4
-        </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validationQ1">
-          Your input quarter format looks good.
-        </b-form-valid-feedback>
-        <b-form-invalid-feedback :state="validationSelection">
-        You need to select at least one company
-        </b-form-invalid-feedback>
-        <b-form-valid-feedback :state="validationSelection">
-          Your selection of companies looks good.
-        </b-form-valid-feedback>
-      </b-form-group>
-    </b-form>
-    <bar-chart ref="barChart"></bar-chart>
-    <stack-bar-chart ref="stackChart"></stack-bar-chart>
-    <bar-line-charts ref="barLineChart"></bar-line-charts>
+    <div class="logic-flow-button-layout">
+      <b-button class="logic-flow-button" @click="getLogicFlow ('logic-flow')" variant="primary">Get Logic Flow</b-button>
+    </div>
+    <b-card class="logic-chart-card" title="Logic Flow">
+        <div class="logic-chart" id="logic-flow"></div>
+    </b-card>
   </div>
 </template>
 
 <script>
-// import BarChart from '@/components/Cards/BarChart'
-import StackBarChart from '@/components/Cards/StackBarChart'
-// import BarLineCharts from '@/components/Cards/BarPlusLineChart'
-import DataSetting from '../../../../../backend/data_setting.json'
 import helper from '../../helper'
+import * as echarts from 'echarts'
 
 export default {
+  name: 'LineChart',
   created () {
-    let keyList = []
-    let optionCatcher = DataSetting['institutions']
-    for (let institution in optionCatcher) {
-      if (optionCatcher.hasOwnProperty(institution)) {
-        keyList.push(institution)
-      }
-    }
-    let options = []
-    for (let key in keyList) {
-      if (keyList.hasOwnProperty(key)) {
-        let option = {}
-        option.text = optionCatcher[keyList[key]]['Nick']
-        option.value = optionCatcher[keyList[key]]['Nick']
-        options.push(option)
-        this.selected.push(option.value)
-      }
-    }
-    this.options = options
+    this.getQuarterList = helper.getQuarterList
   },
-
-  computed: {
-    validationQ1 () {
-      return /^[0-9]{4}[Qq][1-4]$/.test(this.quarter)
-    },
-    validationSelection () {
-      return this.selected.length !== 0
-    }
-  },
-  name: 'quarter-charts',
-  components: { StackBarChart },
   data: function () {
     return {
-      selected: [],
-      options: [],
-      quarter: helper.getLatestQuarter()
+      lineChartData: {}
     }
   },
   methods: {
+    drawLogicFlow (id) {
+      let chartDom = document.getElementById(id)
+      let myChart = echarts.getInstanceByDom(chartDom)
+      if (myChart == null) {
+        myChart = echarts.init(chartDom)
+      }
+      let option = {
+        series: [
+          {
+            type: 'sankey',
+            left: 50.0,
+            top: 20.0,
+            right: 150.0,
+            bottom: 25.0,
+            data: [
+              {
+                'name': 'Companes',
+                'itemStyle': {
+                  'color': '#FCC32E',
+                  'borderColor': '#FCC32E'
+                }
+              },
+              {
+                'name': 'Total Capital Breakdown',
+                'itemStyle': {
+                  'color': '#3891A7',
+                  'borderColor': '#3891A7'
+                }
+              },
+              {
+                'name': 'Total RWA Assets',
+                'itemStyle': {
+                  'color': '#0037DA',
+                  'borderColor': '#0037DA'
+                }
+              },
+              {
+                'name': 'Key Ratios',
+                'itemStyle': {
+                  'color': '#C0BEAF',
+                  'borderColor': '#C0BEAF'
+                }
+              },
+              {
+                'name': 'Key Buffers',
+                'itemStyle': {
+                  'color': '#EA005E',
+                  'borderColor': '#EA005E'
+                }
+              },
+              {
+                'name': 'Key Exposures',
+                'itemStyle': {
+                  'color': '#D13438',
+                  'borderColor': '#D13438'
+                }
+              },
+              {
+                'name': 'Tier I Capital Adjustments',
+                'itemStyle': {
+                  'color': '#D13438',
+                  'borderColor': '#D13438'
+                }
+              },
+              {
+                'name': 'Tier I Capital Composition',
+                'itemStyle': {
+                  'color': '#9ed566',
+                  'borderColor': '#9ed566'
+                }
+              },
+              {
+                'name': 'Tier II Capital Adjustments',
+                'itemStyle': {
+                  'color': '#2BCC7F',
+                  'borderColor': '#2BCC7F'
+                }
+              },
+              {
+                'name': 'Tier II Capital Composition',
+                'itemStyle': {
+                  'color': '#809B48',
+                  'borderColor': '#809B48'
+                }
+              },
+              {
+                'name': 'Total Consolidated Assets Adjustment',
+                'itemStyle': {
+                  'color': '#9B2D1F',
+                  'borderColor': '#9B2D1F'
+                }
+              },
+              {
+                'name': 'Comparison Of Accounting Assets and Total Exposure',
+                'itemStyle': {
+                  'color': '#604878',
+                  'borderColor': '#604878'
+                }
+              },
+              {
+                'name': 'Total Capital Change vs. Total Derivative Exposure Change',
+                'itemStyle': {
+                  'color': '#A5644E',
+                  'borderColor': '#A5644E'
+                }
+              },
+              {
+                'name': 'Tier I Leverage Ratio vs. Supplementary Leverage Ratio',
+                'itemStyle': {
+                  'color': '#2D3F3A',
+                  'borderColor': '#2D3F3A'
+                }
+              },
+              {
+                'name': 'Total On Balance Sheet Exposure',
+                'itemStyle': {
+                  'color': '#761721',
+                  'borderColor': '#761721'
+                }
+              },
+              {
+                'name': 'Total Derivative Exposure',
+                'itemStyle': {
+                  'color': '#B1BADD',
+                  'borderColor': '#B1BADD'
+                }
+              },
+              {
+                'name': 'Total Repo Exposure',
+                'itemStyle': {
+                  'color': '#B0CCB0',
+                  'borderColor': '#B0CCB0'
+                }
+              }
+            ],
+            links: [
+              {
+                'source': 'Companes',
+                'target': 'Total Capital Breakdown',
+                'value': 1
+              },
+              {
+                'source': 'Companes',
+                'target': 'Total RWA Assets',
+                'value': 1
+              },
+              {
+                'source': 'Companes',
+                'target': 'Key Ratios',
+                'value': 1
+              },
+              {
+                'source': 'Companes',
+                'target': 'Key Buffers',
+                'value': 1
+              },
+              {
+                'source': 'Companes',
+                'target': 'Key Exposures',
+                'value': 1
+              },
+              {
+                'source': 'Total Capital Breakdown',
+                'target': 'Tier I Capital Adjustments',
+                'value': 1
+              },
+              {
+                'source': 'Total Capital Breakdown',
+                'target': 'Tier I Capital Composition',
+                'value': 1
+              },
+              {
+                'source': 'Total Capital Breakdown',
+                'target': 'Tier II Capital Adjustments',
+                'value': 1
+              },
+              {
+                'source': 'Total Capital Breakdown',
+                'target': 'Tier II Capital Composition',
+                'value': 1
+              },
+              {
+                'source': 'Key Ratios',
+                'target': 'Tier I Leverage Ratio vs. Supplementary Leverage Ratio',
+                'value': 1
+              },
+              {
+                'source': 'Key Ratios',
+                'target': 'Total On Balance Sheet Exposure',
+                'value': 1
+              },
+              {
+                'source': 'Key Ratios',
+                'target': 'Total Derivative Exposure',
+                'value': 1
+              },
+              {
+                'source': 'Key Ratios',
+                'target': 'Total Repo Exposure',
+                'value': 1
+              },
+              {
+                'source': 'Total RWA Assets',
+                'target': 'Comparison Of Accounting Assets and Total Exposure',
+                'value': 1
+              },
+              {
+                'source': 'Total RWA Assets',
+                'target': 'Total Capital Change vs. Total Derivative Exposure Change',
+                'value': 1
+              },
+              {
+                'source': 'Key Exposures',
+                'target': 'Total Consolidated Assets Adjustment',
+                'value': 1
+              },
+              {
+                'source': 'Key Exposures',
+                'target': 'Comparison Of Accounting Assets and Total Exposure',
+                'value': 1
+              },
+              {
+                'source': 'Key Exposures',
+                'target': 'Total Capital Change vs. Total Derivative Exposure Change',
+                'value': 1
+              },
+              {
+                'source': 'Key Exposures',
+                'target': 'Tier I Leverage Ratio vs. Supplementary Leverage Ratio',
+                'value': 1
+              },
+              {
+                'source': 'Key Exposures',
+                'target': 'Total On Balance Sheet Exposure',
+                'value': 1
+              },
+              {
+                'source': 'Key Exposures',
+                'target': 'Total Derivative Exposure',
+                'value': 1
+              },
+              {
+                'source': 'Key Exposures',
+                'target': 'Total Repo Exposure',
+                'value': 1
+              }
+            ],
+            lineStyle: {
+              color: 'source',
+              curveness: 0.5
+            },
+            itemStyle: {
+              color: '#1f77b4',
+              borderColor: '#1f77b4'
+            },
+            label: {
+              color: 'rgba(0,0,0,0.7)',
+              fontFamily: 'Arial',
+              fontSize: 10
+            }
+          }
+        ],
+        tooltip: {
+          trigger: 'item'
+        }
+      }
+      myChart.setOption(option, true)
+    },
+    getLogicFlow (id) {
+      let that = this
+      that.drawLogicFlow(id)
+    },
     getData () {
-      // this.$refs.barChart.getData('VaR-SVaR-comparison', this.quarter, this.selected)
-      // this.$refs.barChart.getData('trading-asset-comparison', this.quarter, this.selected)
-      // this.$refs.barChart.getAggData('trading-asset-to-risk-ratio', this.quarter, this.selected)
-      // this.$refs.barChart.getAggData('trading-revenue-to-VaR-ratio', this.quarter, this.selected)
-      this.$refs.stackChart.getData('overall-exposure-adjustment-stack-bar-chart', this.quarter, this.selected)
-      // this.$refs.stackChart.getData('VaR-by-asset-class-and-diversification-effect', this.quarter, this.selected)
-      // this.$refs.barLineChart.getData('trading-asset', this.quarter, this.selected)
-      // this.$refs.barLineChart.getData('trading-liabilities', this.quarter, this.selected)
-      // this.$refs.barLineChart.getData('net-trading-asset', this.quarter, this.selected)
-      // this.$refs.barLineChart.getData('gross-trading-asset', this.quarter, this.selected)
+      console.log(this.selected)
+      this.$refs.getLogicFlow('logic-flow')
+      // this.$refs.overTimeBarChart.getData('number-of-VaR-breach', this.quarter1, this.quarter2, this.selected)
+      // this.$refs.overTimeTable.getData('stress-window-table', this.quarter1, this.quarter2, this.selected)
     }
   }
 }
 </script>
 
 <style scoped>
-#input-group {
+#input-group-1 {
   margin: 5px;
 }
-#input-quarter{
+#input-quarter-1{
   margin: 10px;
   width: 200px;
 }
-
+#input-group-2 {
+  margin: 5px;
+}
+#input-quarter-2{
+  margin: 10px;
+  width: 200px;
+}
 #select-group {
   margin: 5px;
 }
@@ -125,20 +336,49 @@ export default {
 #error-catcher {
   margin: 5px;
 }
-.QH_header_span{
-  font-family: 'Poppins', sans-serif;
-  font-weight: bold;
+.OA_header_span{
+  font-family: 'Georgia', sans-serif;
   color: #323030;
+  font-weight: bold;
 }
-.QH_header{
+.OA_header{
+  text-align: center;
+  font-size: 3em;
   margin-bottom: 10px;
 }
-.QH_header_layout{
-  border-bottom: 1px solid;
-  border-bottom-color: #CACACA;
+.OA_header_layout{
   margin-bottom: 15px;
-  margin-top: 5px;
+  margin-top: 50px;
   box-sizing: border-box;
 }
 
+.logic-flow-button-layout{
+  text-align: center;
+  alignment: center;
+  margin-bottom: 20px;
+}
+
+.logic-chart-card {
+  max-width: 150rem;
+  max-height: 60rem;
+  margin-bottom: 20px;
+}
+
+.logic-chart-card {
+  font-family: "Georgia";
+}
+
+.logic-chart {
+  width: 100%;
+  height: 50rem;
+  display: inline-block;
+}
+
+.tierDisplay {
+  font-family: "Georgia";
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  font-size: 2em;
+}
 </style>

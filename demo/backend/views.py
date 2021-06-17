@@ -76,10 +76,214 @@ def response_processing(result):
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
 
+## Graphs in the quarterly highlihghts key
+@bp.route('/getTotalCapitalStack', methods=['GET'])
+def getTotalCapitalStack():
+    quarter = request.args['quarter']
+    result = get_total_capital_stack(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTotalRWA', methods=['GET'])
+def getTotalRWA():
+    quarter = request.args['quarter']
+    result = get_total_RWA_bar(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getKeyRatios', methods=['GET'])
+def getKeyRatios():
+    quarter = request.args['quarter']
+    result = key_ratio_comparison_bar(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getBufferStack', methods=['GET'])
+def getBufferStack():
+    quarter = request.args['quarter']
+    result = get_buffer_stack(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTotalExposureDecomposition', methods=['GET'])
+def getTotalExposureDecomposition():
+    quarter = request.args['quarter']
+    result = get_total_exposure_decomposition(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+## Graphs in the quarterly highlights detail
+@bp.route('/getTierIDeductionsAdjustStack', methods=['GET'])
+def getTierIDeductionsAdjustStack():
+    quarter = request.args['quarter']
+    result = get_tier1deductions_adjustment_stack(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTierICompositionStack', methods=['GET'])
+def getTierICompositionStack():
+    quarter = request.args['quarter']
+    result = get_tier1composition_stack(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTierIIDeductionsAdjustStack', methods=['GET'])
+def getTierIIDeductionsAdjustStack():
+    quarter = request.args['quarter']
+    result = get_tier2deduction_adjustment_stack(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTierIIBeforeDeductionStack', methods=['GET'])
+def getTierIIBeforeDeductionStack():
+    quarter = request.args['quarter']
+    result = get_tier2_before_deduction_stack(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
 @bp.route('/getOverallExposureAdjustStack', methods=['GET'])
 def getOverallExposureAdjustStack():
     quarter = request.args['quarter']
     result = get_exposure_adjustment_stack(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getAssetExposureComparison', methods=['GET'])
+def getAssetExposureComparison():
+    quarter = request.args['quarter']
+    result = get_comparison_asset_exposure_bar(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTCDA', methods=['GET'])
+def getTCDA():
+    quarter = request.args['quarter']
+    result = get_TC_DA_by_quarter(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getLeverageSup', methods=['GET'])
+def getLeverageSup():
+    quarter = request.args['quarter']
+    result = get_leverage_supplementary(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+
+@bp.route('/getTotalOnBalanceSheetExposure', methods=['GET'])
+def getTotalOnBalanceSheetExposure():
+    quarter = request.args['quarter']
+    result = get_total_on_balance_sheet_exposure(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getDerivativeExposure', methods=['GET'])
+def getDerivativeExposure():
+    quarter = request.args['quarter']
+    result = get_derivative_exposure(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getRepoExposure', methods=['GET'])
+def getRepoExposure():
+    quarter = request.args['quarter']
+    result = get_repo_exposure(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getOffBalanceExposure', methods=['GET'])
+def getOffBalanceExposure():
+    quarter = request.args['quarter']
+    result = get_offbalance_exposure(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTotalOnBalanceSheetExposureDecomp', methods=['GET'])
+def getTotalOnBalanceSheetExposureDecomp():
+    quarter = request.args['quarter']
+    result = get_on_balance_sheet_exposure_decomposition(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getDerivativeExposureDecomp', methods=['GET'])
+def getDerivativeExposureDecomp():
+    quarter = request.args['quarter']
+    result = get_derivative_exposure_decomposition(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getRepoExposureDecomp', methods=['GET'])
+def getRepoExposureDecomp():
+    quarter = request.args['quarter']
+    result = get_repo_exposure_decomposition(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getOffBalanceSheetExposureDecomp', methods=['GET'])
+def getOffBalanceSheetExposureDecomp():
+    quarter = request.args['quarter']
+    result = get_off_balance_sheet_exposure_decomposition(quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+## Overtime Analysis
+@bp.route('/getTier1CapitalOvertime', methods=['GET'])
+def getTier1CapitalOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier1_capital_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTier2CapitalOvertime', methods=['GET'])
+def getTier2CapitalOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier2_capital_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTier1RetainedEarningOvertime', methods=['GET'])
+def getTier1RetainedEarningOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier1_retainedearnings_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTier1GoodwillOvertime', methods=['GET'])
+def getTier1GoodwillOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier1_goodwill_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTier2MinorityIntOvertime', methods=['GET'])
+def getTier2MinorityIntOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier2_minority_int_notin_tier1_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTier2CapitalRatioOvertime', methods=['GET'])
+def getTier2CapitalRatioOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier2_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTier2DeductionOvertime', methods=['GET'])
+def getTier2DeductionOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier2_deduction_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getCET1RatioOvertime', methods=['GET'])
+def getCET1RatioOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_cet1_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTier1RatioOvertime', methods=['GET'])
+def getTier1RatioOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_tier1_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getCETVsTier1RatioOvertime', methods=['GET'])
+def getCETVsTier1RatioOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_CET1vsTier1_overtime(start_quarter, end_quarter, session.get("comp_dict"))
     return response_processing(result)
 
 @bp.route('/getTotalExposureOvertime', methods=['GET'])
@@ -88,6 +292,118 @@ def getTotalExposureOvertime():
     start_quarter = args['start']
     end_quarter = args['end']
     result = get_total_exposure_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getOnBalanceSheetOvertime', methods=['GET'])
+def getOnBalanceSheetOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_on_balance_sheet_exp_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getDerivativeOvertime', methods=['GET'])
+def getDerivativeOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_derivative_exp_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getRepoOvertime', methods=['GET'])
+def getRepoOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_repo_exp_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getOffBalanceOvertime', methods=['GET'])
+def getOffBalanceOvertime():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_off_balance_exp_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getOnBalanceSheetRatio', methods=['GET'])
+def getOnBalanceSheetRatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_on_balance_sheet_exp_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getDerivativeExposureRatio', methods=['GET'])
+def getDerivativeExposureRatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_derivative_exposure_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getRepoExposureRatio', methods=['GET'])
+def getRepoExposureRatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_repo_exposure_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getOffBalanceExposureRatio', methods=['GET'])
+def getOffBalanceExposureRatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_off_balance_sheet_exp_ratio_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getT2CTCRatio', methods=['GET'])
+def getT2CTCRatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_T2C_TC_ratio_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTCOBSIRatio', methods=['GET'])
+def getTCOBSIRatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_TC_OBSI_ratio_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTCDARatio', methods=['GET'])
+def getTCDARatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_TC_DA_ratio_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTCRARatio', methods=['GET'])
+def getTCRARatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_TC_RA_ratio_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getTCOFFBSIRatio', methods=['GET'])
+def getTCOFFBSIRatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_TC_OffBSI_ratio_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
+    return response_processing(result)
+
+@bp.route('/getRWATARatio', methods=['GET'])
+def getRWATARatio():
+    args = request.args
+    start_quarter = args['start']
+    end_quarter = args['end']
+    result = get_RWA_TA_ratio_item_overtime(start_quarter, end_quarter, session.get("comp_dict"))
     return response_processing(result)
 
 
